@@ -1,0 +1,139 @@
+{
+  "configVersion": "v2",
+  "app": {
+    "appId": 20000,
+    "appName": "Empty",
+    "appType": "app",
+    "version": {
+      "code": 1,
+      "name": "1.0.1"
+    },
+    "icon": "icon.png",
+    "vender": "zepp",
+    "description": "empty app"
+  },
+  "permissions": [],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "1.0.0",
+      "target": "1.0.1",
+      "minVersion": "1.0.0"
+    }
+  },
+  "targets": {
+    "default": {
+      "module": {
+        "page": {
+          "pages": [
+            "page/index"
+          ]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
+        }
+      },
+      "platforms": [
+        {
+          "name": "gtr3-pro",
+          "deviceSource": 229,
+		      "designWidth": 480
+        },
+        {
+          "name": "gtr3-pro-w",
+          "deviceSource": 230,
+		      "designWidth": 480
+        },
+        {
+          "name": "gtr3-pro-meilin",
+          "deviceSource": 6095106,
+		      "designWidth": 480
+        },
+        {
+          "name": "gtr3",
+          "deviceSource": 226,
+		      "designWidth": 454
+        },
+        {
+          "name": "gtr3-w",
+          "deviceSource": 227,
+		      "designWidth": 454
+        },
+        {
+          "name": "gts3",
+          "deviceSource": 224,
+		      "designWidth": 390
+        },
+        {
+          "name": "gts3-w",
+          "deviceSource": 225,
+		      "designWidth": 390
+        },
+        {
+          "name": "t-rex2",
+          "deviceSource": 418,
+		      "designWidth": 454
+        },
+        {
+          "name": "t-rex2-w",
+          "deviceSource": 419,
+		      "designWidth": 454
+        },
+        {
+          "name": "gts4-mini",
+          "deviceSource": 246,
+		      "designWidth": 336
+        },
+        {
+          "name": "gts4-mini-w",
+          "deviceSource": 247,
+		      "designWidth": 336
+        },
+        {
+          "name": "amazfit-band7-nfc",
+          "deviceSource": 252,
+		      "designWidth": 194
+        },
+        {
+          "name": "amazfit-band7",
+          "deviceSource": 253,
+		      "designWidth": 194
+        },
+        {
+          "name": "amazfit-band7-w",
+          "deviceSource": 254,
+		      "designWidth": 194
+        },
+        {
+          "name": "gtr4",
+          "deviceSource": 7930112,
+		      "designWidth": 466
+        },
+        {
+          "name": "gtr4-w",
+          "deviceSource": 7930113,
+		      "designWidth": 466
+        },
+        {
+          "name": "gts4",
+          "deviceSource": 7995648,
+		      "designWidth": 390
+        },
+        {
+          "name": "gts4-w",
+          "deviceSource": 7995649,
+		      "designWidth": 390
+        }
+      ],
+      "designWidth": 194
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "Empty"
+    }
+  },
+  "defaultLanguage": "en-US"
+}
