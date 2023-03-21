@@ -65,13 +65,6 @@ const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
       0xFF7F50, 0xDB7093, 0xFF1493, 0xCB4154, 0xDC143C, 0xFF0000, 0x008080, 0x4682B4, 
       0xFF6347, 0x6B8E23, 0xA52A2A, 0x8A2BE2, 0x54FF9F, 0xB22222, 0xD2691E, 0xFF8C00, 
       0x4B0082, 0x778899];
- /*   let bgColourArray = ["0x000000", "0x2F4F4F", "0x696969", "0xBEBEBE", "0xB03060", "0x8B4513", "0xB8860B", "0xDAA520",
-      "0xBC8F8F", "0x000080", "0x0000FF", "0x1E90FF", "0x00BFFF", "0x808000", "0x006400", "0x00FF00", 
-      "0x32CD32", "0x483D8B", "0x6A5ACD", "0xA020F0", "0xA020F0", "0xDA70D6", "0xBDB76B", "0xFF4500", 
-      "0xFF7F50", "0xDB7093", "0xFF1493", "0xCB4154", "0xDC143C", "0xFF0000", "0x008080", "0x4682B4", 
-      "0xFF6347", "0x6B8E23", "0xA52A2A", "0x8A2BE2", "0x54FF9F", "0xB22222", "0xD2691E", "0xFF8C00", 
-      "0x4B0082", "0x778899"];*/
-     // backgroundColour = bgColourArray[Math.floor(Math.random() * bgColourArray.length)];
 
    function decimalToHexString(number) {
     if (number < 0) {
@@ -133,13 +126,6 @@ Page({
     currTempUnit = tempUnit == 0 ? "°C" : "°F";
     weatherText = (`London - Cloudy ${currentTemp}${currTempUnit}`);
 
-    function changeColour() {
-      backgroundColour = bgColourArray[Math.floor(Math.random() * bgColourArray.length)];
-      console.log("Background colour changed to "+backgroundColour);
-   //   backgroundColour = "0x"+decimalToHexString(bgColourArray[Math.floor(Math.random() * bgColourArray.length)]);
-    }
-
-
     function loadSettings() {
         // Date Format (settings menu)
         if (dateFormat == 0) {// ddd dd mm
@@ -169,7 +155,6 @@ Page({
         } 
 
         statusText = "Status "+statusSwitch;
-    //    changeColour();
       }
 
       // tap to change date format
@@ -185,7 +170,7 @@ Page({
 
       // tap to change background colours by cycling through the array
       function click_backgroundColour() {
-        changeColour();
+      backgroundColour = bgColourArray[Math.floor(Math.random() * bgColourArray.length)];
       console.log("Button pressed - background colour changed to "+backgroundColour);
       loadSettings();
       drawBackground();
@@ -224,14 +209,14 @@ Page({
         w: DEVICE_WIDTH,
         h: DEVICE_HEIGHT,
         radius: 0,
-        color: 0x000000,
+        color: backgroundColour,
       })
       hmUI.createWidget(hmUI.widget.CIRCLE, {
         // Full size filled circle
         center_x: DEVICE_WIDTH/2,
         center_y: DEVICE_HEIGHT/2,
         radius: DEVICE_WIDTH,
-        color: 0x000000,
+        color: backgroundColour,
       })
       hmUI.createWidget(hmUI.widget.STROKE_RECT, {
         // Full size outline rect
