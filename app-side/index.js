@@ -1,13 +1,13 @@
 import { gettext } from 'i18n'
 import { MessageBuilder } from '../shared/message'
 
-const messageBuilder = new MessageBuilder()
+ const messageBuilder = new MessageBuilder()
 
 AppSideService({
   onInit() {
     console.log(gettext('example'))
     messageBuilder.listen(() => {})
-    settings.settingsStorage.addListener('change', async ({ key, newValue, oldValue }) => {
+ /*   settings.settingsStorage.addListener('change', async ({ key, newValue, oldValue }) => {
       if (key === 'token' && newValue) {
         // ...
         await reLogin()
@@ -19,7 +19,7 @@ AppSideService({
       if (jsonRpc.method === 'GET_DATA') {
         return fetchData(ctx)
       }
-    })
+    })*/
   },
 
   onRun() {

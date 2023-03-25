@@ -1,6 +1,9 @@
 import { gettext } from 'i18n'
 import * as util from '../utils/index.js'
-import { readFileSync, writeFileSync } from '../utils/fs'
+//import { readFileSync, writeFileSync } from '../utils/fs'
+import { readFileSync, writeFileSync } from '../shared/fs'
+
+let paramsObj = {};
 
 hmUI.setStatusBarVisible(false)
 
@@ -55,7 +58,9 @@ const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
 
 
     // colour
-    let backgroundColour = 0;//0x000000;
+   // let backgroundColour = 0;//0x000000;
+  //  let backgroundColour = getApp()._options.globalData.backgroundColour;
+    let backgroundColour = paramsObj.backgroundColour;
     let textColour = 0xffffff;
 
     // cycle through colours (text, background, foreground)
@@ -83,16 +88,17 @@ const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
 
 
 Page({
-  state: {
+/*  state: {
     scrollList: null,
     tipText: null,
     refreshText: null,
     addButton: null,
     dataList: readFileSync()
-  },
-  onInit() {
+  },*/
+  onInit(params) {
     logger.debug('page onInit invoked')
-    this.onMessage()
+//    this.onMessage()
+    paramsObj = JSON.parse(params);
    // this.getTodoList()
   },
   build() {
@@ -142,7 +148,7 @@ Page({
         }
 
         // test status codes (not on settings menu)
-        if (statusSwitch == 1) {
+       /* if (statusSwitch == 1) {
           statusText = "Status 01";
         } else if (statusSwitch == 2) {
           statusText = "Status 02";
@@ -152,7 +158,7 @@ Page({
           statusText = "Status 04";
         } else if (statusSwitch == 5) {
           statusText = "Status 05";
-        } 
+        } */
 
         statusText = "Status "+statusSwitch;
       }
@@ -201,23 +207,7 @@ Page({
       }
     }
 
-    function drawTestBackground() { //testing background sizes
-      hmUI.createWidget(hmUI.widget.FILL_RECT, {
-        // Full size filled rect
-        x: 0,
-        y: 0,
-        w: DEVICE_WIDTH,
-        h: DEVICE_HEIGHT,
-        radius: 0,
-        color: backgroundColour,
-      })
-      hmUI.createWidget(hmUI.widget.CIRCLE, {
-        // Full size filled circle
-        center_x: DEVICE_WIDTH/2,
-        center_y: DEVICE_HEIGHT/2,
-        radius: DEVICE_WIDTH,
-        color: backgroundColour,
-      })
+    function drawTestBackground() { //testing background circle and rect sizes
       hmUI.createWidget(hmUI.widget.STROKE_RECT, {
         // Full size outline rect
         x: 0,
@@ -228,7 +218,6 @@ Page({
         line_width: 4,
         color: 0xfc6950
       })
-
       hmUI.createWidget(hmUI.widget.ARC, {
         //Full size outline circle
         x: widthDiff,
@@ -331,9 +320,26 @@ Page({
   },
   onDestroy() {
     logger.debug('page onDestroy invoked')
-    writeFileSync(this.state.dataList, false)
+ //   writeFileSync(this.state.dataList, false)
+
+    const backgroundColour1 = backgroundColour;
+
+    if (backgroundColour1 !== getApp()._options.globalData.backgroundColour) {
+      getApp()._options.globalData.backgroundColour = backgroundColour1;
+      getApp()._options.globalData.localStorage.set({
+        backgroundColour: backgroundColour1
+      });
+    }
+    console.log("closing index colour - "+backgroundColour);
+    console.log("closing index test colour - "+backgroundColour1);
+
+    params: JSON.stringify({
+      backgroundColour: backgroundColour1
+    })
+
+
   },
-  onMessage() {
+/*  onMessage() {
     messageBuilder.on('call', ({ payload: buf }) => {
       const data = messageBuilder.buf2Json(buf)
       const dataList = data.map((i) => ({ name: i }))
@@ -361,5 +367,5 @@ Page({
       this.state.dataList = dataList
     //  this.createAndUpdateList()
     }, 20)
-  }
+  }*/
 })
