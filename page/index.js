@@ -1,9 +1,10 @@
 import { gettext } from 'i18n'
 import * as util from '../utils/index.js'
-//import { readFileSync, writeFileSync } from '../utils/fs'
-import { readFileSync, writeFileSync } from '../shared/fs'
 
-let paramsObj = {};
+import EasySave from "../lib/easy-save"
+const storage = new EasySave
+import { VisLog } from "../lib/vis-log"
+const vis = new VisLog
 
 hmUI.setStatusBarVisible(false)
 
@@ -22,6 +23,13 @@ const heightDiff = DEVICE_HEIGHT > DEVICE_WIDTH ? Math.abs(DEVICE_WIDTH-DEVICE_H
 
 const time = hmSensor.createSensor(hmSensor.id.TIME);
 const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
+
+// set correct font size based on design width.  Unable to tailor the design width to each device.
+function getpx(n) {
+  // px(x) function is Math.ceil(x / designWidth * DEVICE_WIDTH)
+  var x = Math.ceil(n / 194 * DEVICE_WIDTH); //designWidth 194 or 336??
+  return x;
+}
 
     // time/date
     let hour = 0;
@@ -58,9 +66,7 @@ const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
 
 
     // colour
-   // let backgroundColour = 0;//0x000000;
-  //  let backgroundColour = getApp()._options.globalData.backgroundColour;
-    let backgroundColour = paramsObj.backgroundColour;
+    let backgroundColour = storage.getKey("backgroundColour", 0x000000);
     let textColour = 0xffffff;
 
     // cycle through colours (text, background, foreground)
@@ -83,27 +89,22 @@ const battery = hmSensor.createSensor(hmSensor.id.BATTERY);
 
     // test status codes
     let statusText = "";
-    let statusSwitch = 0;
+    let statusSwitch = storage.getKey("statusSwitch", 0);
 
-
+  /*export function loadSettings() { // executes on init
+      let dateFormat = storage.getKey("dateFormat", 0);
+      let tempUnit = storage.getKey("tempUnit", 0);
+    }*/
+      
 
 Page({
-/*  state: {
-    scrollList: null,
-    tipText: null,
-    refreshText: null,
-    addButton: null,
-    dataList: readFileSync()
+/*  init() {
+    loadSettings();
   },*/
-  onInit(params) {
-    logger.debug('page onInit invoked')
-//    this.onMessage()
-    paramsObj = JSON.parse(params);
-   // this.getTodoList()
-  },
   build() {
     try {
       console.log(gettext('example'))
+      console.log("Opening app - contents: " + storage.getContents());
 
     // time/date
     hour = util.zeroPad(time.is24Hour == true ? time.hour : (time.hour % 12 ? time.hour % 12 : 12));
@@ -132,8 +133,9 @@ Page({
     currTempUnit = tempUnit == 0 ? "°C" : "°F";
     weatherText = (`London - Cloudy ${currentTemp}${currTempUnit}`);
 
-    function loadSettings() {
+    function updateSettings() {
         // Date Format (settings menu)
+//        dateFormat = storage.getKey("dateFormat");
         if (dateFormat == 0) {// ddd dd mm
           dateText = (`${day} ${date} ${month}`);
         } else if (dateFormat == 1) {// ddd mm dd
@@ -141,34 +143,29 @@ Page({
         }
 
         // Temperature Unit (settinge menu)
+ //       tempUnit = storage.getKey("tempUnit");
         if (tempUnit == 0) { //Celsius
           currentTemp = tempC;
         } else if (tempUnit == 1) { //Fahrenheit
           currentTemp = tempF;
         }
 
-        // test status codes (not on settings menu)
-       /* if (statusSwitch == 1) {
-          statusText = "Status 01";
-        } else if (statusSwitch == 2) {
-          statusText = "Status 02";
-        } else if (statusSwitch == 3) {
-          statusText = "Status 03";
-        } else if (statusSwitch == 4) {
-          statusText = "Status 04";
-        } else if (statusSwitch == 5) {
-          statusText = "Status 05";
-        } */
+        // test internal settings (not on settings menu)
+        backgroundColour = storage.getKey("backgroundColour");
+        statusSwitch = storage.getKey("statusSwitch", 0);
 
         statusText = "Status "+statusSwitch;
+
+        console.log("Loading settings: " + storage.getContents());
       }
 
       // tap to change date format
       function click_statusChange() {
-        statusSwitch++;
+        statusSwitch++
         if (statusSwitch > 5) statusSwitch = 0; 
+        storage.setKey("statusSwitch", statusSwitch);
         console.log("Button pressed - status code "+statusSwitch);
-        loadSettings();
+        updateSettings();
         drawBackground();
         drawTestBackground();
         drawAppSettings();
@@ -176,9 +173,9 @@ Page({
 
       // tap to change background colours by cycling through the array
       function click_backgroundColour() {
-      backgroundColour = bgColourArray[Math.floor(Math.random() * bgColourArray.length)];
+      storage.setKey("backgroundColour", bgColourArray[Math.floor(Math.random() * bgColourArray.length)]);
       console.log("Button pressed - background colour changed to "+backgroundColour);
-      loadSettings();
+      updateSettings();
       drawBackground();
       drawTestBackground();
       drawAppSettings();
@@ -220,8 +217,8 @@ Page({
       })
       hmUI.createWidget(hmUI.widget.ARC, {
         //Full size outline circle
-        x: widthDiff,
-        y: heightDiff,
+        x: widthDiff/2,
+        y: heightDiff/2,
         w: clockWidth,
         h: clockWidth,
         start_angle: -90,
@@ -238,9 +235,9 @@ Page({
         x: 0,
         y: DEVICE_HEIGHT * 0.35 - 20,
         w: DEVICE_WIDTH,
-        h: px(40),
+        h: getpx(40),
         color: textColour,
-        text_size: px(30),
+        text_size: getpx(30),
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
@@ -252,9 +249,9 @@ Page({
         x: 0,
         y: DEVICE_HEIGHT * 0.5 - 15,
         w: DEVICE_WIDTH,
-        h: px(30),
+        h: getpx(30),
         color: textColour,
-        text_size: px(20),
+        text_size: getpx(20),
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
@@ -266,9 +263,9 @@ Page({
         x: 0,
         y: DEVICE_HEIGHT * 0.65 - 15,
         w: DEVICE_WIDTH,
-        h: px(30),
+        h: getpx(30),
         color: textColour,
-        text_size: px(20),
+        text_size: getpx(20),
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
@@ -308,7 +305,7 @@ Page({
       });
     }
 
-      loadSettings();
+      updateSettings();
       drawBackground();
       drawTestBackground();
       drawAppSettings();
@@ -320,52 +317,6 @@ Page({
   },
   onDestroy() {
     logger.debug('page onDestroy invoked')
- //   writeFileSync(this.state.dataList, false)
-
-    const backgroundColour1 = backgroundColour;
-
-    if (backgroundColour1 !== getApp()._options.globalData.backgroundColour) {
-      getApp()._options.globalData.backgroundColour = backgroundColour1;
-      getApp()._options.globalData.localStorage.set({
-        backgroundColour: backgroundColour1
-      });
-    }
-    console.log("closing index colour - "+backgroundColour);
-    console.log("closing index test colour - "+backgroundColour1);
-
-    params: JSON.stringify({
-      backgroundColour: backgroundColour1
-    })
-
-
+    console.log("Closing app - contents: " + storage.getContents());
   },
-/*  onMessage() {
-    messageBuilder.on('call', ({ payload: buf }) => {
-      const data = messageBuilder.buf2Json(buf)
-      const dataList = data.map((i) => ({ name: i }))
-      logger.log('call dataList', dataList)
-      this.refreshAndUpdate(dataList)
-    })
-  },
-  getTodoList() {
-    messageBuilder
-      .request({
-        method: 'GET_TODO_LIST'
-      })
-      .then(({ result }) => {
-        this.state.dataList = result.map((d) => ({ name: d }))
-        logger.log('GET_TODO_LIST dataList', this.state.dataList)
-    //    this.createAndUpdateList()
-      })
-      .catch((res) => {})
-  },
-  refreshAndUpdate(dataList = []) {
-    this.state.dataList = []
-    //this.createAndUpdateList(false)
-
-    setTimeout(() => {
-      this.state.dataList = dataList
-    //  this.createAndUpdateList()
-    }, 20)
-  }*/
 })
