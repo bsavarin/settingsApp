@@ -3,14 +3,49 @@ import { MessageBuilder } from '../shared/message'
 
  const messageBuilder = new MessageBuilder()
 
+ const mockAPI = async () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({
+        body: {
+          data: {
+            text: 'HELLO ZEPPOS',
+            dateFormat: dateFormat,
+            tempUnit: tempUnit
+
+          }
+        }
+      })
+    }, 1000)
+  })
+}
+
+ const fetchData = async (ctx) => {
+  try {
+    console.log("Settings saved from appside");
+        // A network request is simulated here
+        const { body: { data = {}} = {} } = await mockAPI();
+    ctx.response({
+      data: { result: data }
+    })
+  } catch (error) {
+    ctx.response({
+      data: { result: 'ERROR' },
+    })
+  }
+
+}
+
 AppSideService({
   onInit() {
     console.log(gettext('example'))
     messageBuilder.listen(() => {})
- /*   settings.settingsStorage.addListener('change', async ({ key, newValue, oldValue }) => {
-      if (key === 'token' && newValue) {
+    settings.settingsStorage.addListener('change', async ({ key, newValue, oldValue }) => {
+     if (key && newValue) {
         // ...
-        await reLogin()
+       // await reLogin()
+        newValue = JSON.parse(settings.settingsStorage.getItem(key));
+        console.log("Settings saved from appside - "+key+", "+newValue);
       }
     })
 
@@ -19,7 +54,7 @@ AppSideService({
       if (jsonRpc.method === 'GET_DATA') {
         return fetchData(ctx)
       }
-    })*/
+    })
   },
 
   onRun() {

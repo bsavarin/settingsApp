@@ -66,7 +66,7 @@ function getpx(n) {
 
 
     // colour
-    let backgroundColour = storage.getKey("backgroundColour", 0x000000);
+    let backgroundColour = 0x000000;
     let textColour = 0xffffff;
 
     // cycle through colours (text, background, foreground)
@@ -91,16 +91,13 @@ function getpx(n) {
     let statusText = "";
     let statusSwitch = storage.getKey("statusSwitch", 0);
 
-  /*export function loadSettings() { // executes on init
-      let dateFormat = storage.getKey("dateFormat", 0);
-      let tempUnit = storage.getKey("tempUnit", 0);
+ /*   function saveSettings(key, value) {
+      storage.setKey(key, value);
+      console.log("Settings saved from menu");
     }*/
       
 
 Page({
-/*  init() {
-    loadSettings();
-  },*/
   build() {
     try {
       console.log(gettext('example'))
@@ -133,17 +130,32 @@ Page({
     currTempUnit = tempUnit == 0 ? "°C" : "°F";
     weatherText = (`London - Cloudy ${currentTemp}${currTempUnit}`);
 
+    function getSettings() {
+      messageBuilder.request({
+        method: "GET_DATA",
+      })
+      .then(data => {
+        logger.log('receive data')
+        const { result = {} } = data
+        const { text } = result
+       // const { text, location, tempC, tempF } = result
+  
+      // weather
+         dateFormat = result.dateFormat ? result.dateFormat : "N/A";
+         tempUnit = result.tempUnit ? result.tempUnit : "N/A";
+      })
+      console.log("settings loaded");
+    }
+
     function updateSettings() {
         // Date Format (settings menu)
-//        dateFormat = storage.getKey("dateFormat");
         if (dateFormat == 0) {// ddd dd mm
           dateText = (`${day} ${date} ${month}`);
         } else if (dateFormat == 1) {// ddd mm dd
           dateText = (`${day} ${month} ${date}`);
         }
 
-        // Temperature Unit (settinge menu)
- //       tempUnit = storage.getKey("tempUnit");
+        // Temperature Unit (settings menu)
         if (tempUnit == 0) { //Celsius
           currentTemp = tempC;
         } else if (tempUnit == 1) { //Fahrenheit
@@ -165,20 +177,22 @@ Page({
         if (statusSwitch > 5) statusSwitch = 0; 
         storage.setKey("statusSwitch", statusSwitch);
         console.log("Button pressed - status code "+statusSwitch);
-        updateSettings();
+        /*updateSettings();
         drawBackground();
         drawTestBackground();
-        drawAppSettings();
+        drawAppSettings();*/
+        refreshScreen();
       }
 
       // tap to change background colours by cycling through the array
       function click_backgroundColour() {
       storage.setKey("backgroundColour", bgColourArray[Math.floor(Math.random() * bgColourArray.length)]);
       console.log("Button pressed - background colour changed to "+backgroundColour);
-      updateSettings();
+      /*updateSettings();
       drawBackground();
       drawTestBackground();
-      drawAppSettings();
+      drawAppSettings();*/
+      refreshScreen();
     };
 
     function drawBackground() {
@@ -305,10 +319,24 @@ Page({
       });
     }
 
+    function refreshScreen() {
+      getSettings();
       updateSettings();
       drawBackground();
       drawTestBackground();
       drawAppSettings();
+    }
+    refreshScreen();
+
+ /*   setInterval(() => {
+      console.log("Screen refreshed - "+storage.getContents());
+      refreshScreen();
+    }, 1000);*/
+
+    /*  updateSettings();
+      drawBackground();
+      drawTestBackground();
+      drawAppSettings();*/
 
     } catch (e) {
       console.log('LifeCycle Error', e)
