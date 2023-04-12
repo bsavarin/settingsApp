@@ -1,10 +1,28 @@
 import { gettext } from 'i18n'
 import * as util from '../utils/index.js'
+import * as fs from './../shared/fs'
+const SETTINGS_FILE = 'fs_settings_list.txt'
+
 
 import EasySave from "../lib/easy-save"
 const storage = new EasySave
 import { VisLog } from "../lib/vis-log"
 const vis = new VisLog
+
+
+function readFileSync() {
+  const resData = fs.readFileSync(SETTINGS_FILE)
+  return !resData ? [] : JSON.parse(resData)
+}
+
+function writeFileSync(data, merge = true) {
+  let params = data
+  if (merge) {
+    params = [...readFileSync(), ...data]
+  }
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(params))
+}
+
 
 hmUI.setStatusBarVisible(false)
 
@@ -42,6 +60,7 @@ function getpx(n) {
     let monthNum = 0;
     let month = "";
     let separator = "";
+    let currentDate = 0;
 
     let batteryLevel = 0;
 
@@ -98,6 +117,15 @@ function getpx(n) {
       
 
 Page({
+  state: {
+    dataList: readFileSync()
+  },
+  onInit() {
+    logger.debug('page onInit invoked')
+    console.log("Opening onInit page - "+this.state.dataList);
+    this.onMessage();
+    this.getSettings();
+  },
   build() {
     try {
       console.log(gettext('example'))
@@ -130,23 +158,6 @@ Page({
     currTempUnit = tempUnit == 0 ? "°C" : "°F";
     weatherText = (`London - Cloudy ${currentTemp}${currTempUnit}`);
 
-    function getSettings() {
-      messageBuilder.request({
-        method: "GET_DATA",
-      })
-      .then(data => {
-        logger.log('receive data')
-        const { result = {} } = data
-        const { text } = result
-       // const { text, location, tempC, tempF } = result
-  
-      // weather
-         dateFormat = result.dateFormat ? result.dateFormat : "N/A";
-         tempUnit = result.tempUnit ? result.tempUnit : "N/A";
-      })
-      console.log("settings loaded");
-    }
-
     function updateSettings() {
         // Date Format (settings menu)
         if (dateFormat == 0) {// ddd dd mm
@@ -177,10 +188,6 @@ Page({
         if (statusSwitch > 5) statusSwitch = 0; 
         storage.setKey("statusSwitch", statusSwitch);
         console.log("Button pressed - status code "+statusSwitch);
-        /*updateSettings();
-        drawBackground();
-        drawTestBackground();
-        drawAppSettings();*/
         refreshScreen();
       }
 
@@ -188,10 +195,6 @@ Page({
       function click_backgroundColour() {
       storage.setKey("backgroundColour", bgColourArray[Math.floor(Math.random() * bgColourArray.length)]);
       console.log("Button pressed - background colour changed to "+backgroundColour);
-      /*updateSettings();
-      drawBackground();
-      drawTestBackground();
-      drawAppSettings();*/
       refreshScreen();
     };
 
@@ -320,7 +323,6 @@ Page({
     }
 
     function refreshScreen() {
-      getSettings();
       updateSettings();
       drawBackground();
       drawTestBackground();
@@ -345,6 +347,40 @@ Page({
   },
   onDestroy() {
     logger.debug('page onDestroy invoked')
+    writeFileSync(this.state.dataList, false);
     console.log("Closing app - contents: " + storage.getContents());
+    console.log("writeFileSync - "+this.state.dataList);
   },
+  onMessage() {
+    messageBuilder.on('call', ({ payload: buf }) => {
+      const data = messageBuilder.buf2Json(buf)
+      // process data
+//      const dataList = data.map((i) => ({ name: i }))
+
+ /*     this.state.dataList.map(({name, value})=>{ 
+        return {name, value};
+      });*/
+
+      data.map(({name, value})=>{ 
+        console.log(`${name}, ${value}`)     
+      });
+
+
+ //     logger.log('call dataList', dataList);
+  //    console.log("settings loaded onMessage - "+dataList);
+//      logger.log('call dataList', data);
+ //     console.log("settings loaded onMessage - "+data);
+      this.build();
+    })
+  },
+   getSettings() {
+      messageBuilder.request({
+        method: "GET_DATA",
+      })
+      .then(({ result }) => {
+        this.state.dataList = result.map((d) => ({ name: d }))
+        logger.log('GET_DATA dataList', this.state.dataList)
+      })
+      .catch((res) => {})
+    },
 })

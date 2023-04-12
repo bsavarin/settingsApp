@@ -1,5 +1,8 @@
 import { gettext } from 'i18n'
-import * as menu from '../page/settings.js'
+
+function saveMenuSettings(key, value) {
+  console.log("Settings saved from menu - "+key+", "+value);
+}
 
 AppSettingsPage({
   state: {
@@ -40,8 +43,8 @@ setDefaults(props) {
             padding: '12px 0px 12px 0px',
           },
         }),
-        Text ({ fontSize: '15px', verticalAlign: "bottom"}, "Date Format"),
-        Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤㅤㅤ'),
+        Text ({ fontSize: '15px', verticalAlign: "bottom"}, "Date Format ㅤㅤㅤㅤㅤㅤ"),
+ //       Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤㅤㅤ'),
         Select({
           settingsKey: "dateFormat",
           value: props.settingsStorage.getItem("dateFormat"),
@@ -57,7 +60,7 @@ setDefaults(props) {
           ],
           onChange: (value) => {
             props.settingsStorage.setItem("dateFormat", value);
-            menu.saveMenuSettings("dateFormat", value)
+            saveMenuSettings("dateFormat", value)
           },
         }),
         Section({
@@ -65,8 +68,8 @@ setDefaults(props) {
             padding: '12px 0px 12px 0px',
           },
         }),
-        Text ({ fontSize: '15px', verticalAlign: 'bottom'}, "Temperature Unit"),
-        Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤ'),
+        Text ({ fontSize: '15px', verticalAlign: 'bottom'}, "Temperature Unit ㅤㅤㅤㅤ"),
+ //       Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤ'),
         Select({
           settingsKey: "tempUnit",
           value: props.settingsStorage.getItem("tempUnit"),
@@ -82,7 +85,7 @@ setDefaults(props) {
           ],
           onChange: (value) => {
             props.settingsStorage.setItem("tempUnit", value);
-            menu.saveMenuSettings("tempUnit", value)
+            saveMenuSettings("tempUnit", value)
           },
         }),
         Section({
@@ -99,7 +102,7 @@ setDefaults(props) {
           placeholder: props.settingsStorage.getItem("backgroundColour"),
           onChange: (value) => {
             props.settingsStorage.setItem("backgroundColour", value);
-            menu.saveMenuSettings("backgroundColour", value)
+            saveMenuSettings("backgroundColour", value)
           },
         }),
         Section({
