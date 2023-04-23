@@ -80,7 +80,7 @@ function getpx(n) {
     let tempUnit = 0;
     let tempC = 10;
     let tempF = (tempC*9/5) + 32;
-    let currentTemp = 0;
+    let currentTemp = tempUnit == 0 ? tempC : tempF;
     let currTempUnit = "";
 
 
@@ -353,34 +353,73 @@ Page({
   },
   onMessage() {
     messageBuilder.on('call', ({ payload: buf }) => {
-      const data = messageBuilder.buf2Json(buf)
+      const data = JSON.stringify(messageBuilder.buf2Json(buf));
       // process data
-//      const dataList = data.map((i) => ({ name: i }))
+      const dataList = [data].map((i) => ({ name: i }))
 
- /*     this.state.dataList.map(({name, value})=>{ 
-        return {name, value};
+/*      const dataList = Object.entries([data]).map(([key, value]) => {
+        console.log(key); // key
+        console.log(value); // value
+      
+        return {[key]: value};
       });*/
 
-      data.map(({name, value})=>{ 
-        console.log(`${name}, ${value}`)     
-      });
-
-
- //     logger.log('call dataList', dataList);
-  //    console.log("settings loaded onMessage - "+dataList);
-//      logger.log('call dataList', data);
- //     console.log("settings loaded onMessage - "+data);
+  //    storage.setKey("dateFormat", dataList);
+      logger.log('call dataList', dataList);
+      console.log("settings loaded onMessage - "+dataList);
+      this.getSettings();
       this.build();
     })
   },
    getSettings() {
-      messageBuilder.request({
+ /*     messageBuilder.request({
         method: "GET_DATA",
       })
       .then(({ result }) => {
         this.state.dataList = result.map((d) => ({ name: d }))
         logger.log('GET_DATA dataList', this.state.dataList)
       })
+      .catch((res) => {})*/
+
+      messageBuilder.request({
+        method: "GET_DATA",
+      })
+      //Myoung suggested code
+      .then((data) => {
+        logger.log('receive data')
+        console.log("stringify data - "+JSON.stringify(data))
+  //      this.state.dataList = [JSON.stringify(data)].map((d) => ({ name: d }));
+    //    const result = JSON.stringify(data);//this.state.dataList;
+        logger.log("GET_DATA dataList", result);
+
+        const result = Object.entries([JSON.stringify(data)]).map(([key, value]) => {
+        console.log(key); // key
+        console.log(value); // value
+      
+        return {[key]: value};
+      });
+
+        // settings
+        dateFormat = storage.getKey("dateFormat", (result.dateFormat ? result.dateFormat : 0));
+//        dateFormat = storage.getKey("dateFormat", (this.state.dataList.dateFormat ? this.state.dataList.dateFormat : 0));
+        console.log("dateFormat - "+dateFormat);
+        this.build();
+      })
+
+      // original code
+  /*    .then(data => {
+        logger.log('receive data')
+        const { result = {} } = data
+        const { text } = result
+  
+      // settings
+    //    dateFormat = result.dateFormat ? result.dateFormat : 0;
+        dateFormat = storage.getKey("dateFormat", (result.dateFormat ? result.dateFormat : 0));
+        tempUnit = result.tempUnit ? result.tempUnit : 0;
+        logger.log('GET_DATA dataList', result)
+        console.log("dateFormat - "+dateFormat);
+        this.build();
+      })*/
       .catch((res) => {})
     },
 })
