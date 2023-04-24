@@ -37,8 +37,8 @@ const mockAPI = async () => {
      const res1 = typeof res.body === 'string' ?  JSON.parse(res.body) : res.body;
 //     settings.settingsStorage.setItem(key, JSON.stringify(key))
 //     console.log("Settings saved from appside - setItem: "+key);
- //   settings.settingsStorage.setItem(data, JSON.stringify(res1.data))
- //   console.log("Settings saved from appside - setItem: "+data);
+    settings.settingsStorage.setItem(data, JSON.stringify(res1.data))
+    console.log("Settings saved from appside - setItem: "+data);
      console.log("Settings saved from appside - FETCH DATA: "+res1.data);
     ctx.response({
       data: { result: res1.data },
@@ -71,7 +71,7 @@ AppSideService({
        // await reLogin()
        if (newValue !== oldValue) {
         messageBuilder.call(JSON.parse(newValue));
-        settings.settingsStorage.setItem(key, newValue);
+  //      settings.settingsStorage.setItem(key, newValue);
    //     newValue = JSON.parse(settings.settingsStorage.getItem(key));
         console.log("Settings saved from appside - Message LISTEN for CHANGE: "+key+", "+newValue);
        } else {

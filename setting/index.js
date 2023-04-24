@@ -9,18 +9,18 @@ AppSettingsPage({
     props: {},
   },
   
-setDefaults(props) {
+/*setDefaults(props) {
   //   props.settingsStorage.clear();
   //this.state.props = props;
    if (!this.state.props.settings.tempUnit) {this.state.props.settingsStorage.setItem('tempUnit', JSON.stringify({selected:[0], values:[{name:"Celsius", value:"0"}]}));}  
    if (!this.state.props.settings.dateFormat) {this.state.props.settingsStorage.setItem('dateFormat', JSON.stringify({selected:[0], values:[{name:"dd/mm/yyyy", value:"0"}]}));} 
    if (!props.settings.backgroundColour) {props.settingsStorage.setItem('backgroundColour', JSON.stringify("#000000"));} 
    console.log("default menu settings loaded - "+JSON.stringify(this.state.props.settings));
- },
+ },*/
 
   build(props) {
     this.state.props = props;
-    this.setDefaults(props);
+ //   this.setDefaults(props);
     console.log(gettext('example')) 
     return View(
       {
@@ -47,7 +47,7 @@ setDefaults(props) {
  //       Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤㅤㅤ'),
         Select({
           settingsKey: "dateFormat",
-          value: props.settingsStorage.getItem("dateFormat"),
+ //         value: props.settingsStorage.getItem("dateFormat"),
           options: [
             {
               name: "dd/mm/yyyy",
@@ -58,10 +58,10 @@ setDefaults(props) {
               value: '1',
             },
           ],
-          onChange: (value) => {
+   /*       onChange: (value) => {
             props.settingsStorage.setItem("dateFormat", value);
             saveMenuSettings("dateFormat", value)
-          },
+          },*/
         }),
         Section({
           style: {
@@ -72,7 +72,7 @@ setDefaults(props) {
  //       Text ({ fontSize: '15px', verticalAlign: 'bottom'}, 'ㅤㅤㅤㅤ'),
         Select({
           settingsKey: "tempUnit",
-          value: props.settingsStorage.getItem("tempUnit"),
+   //       value: props.settingsStorage.getItem("tempUnit"),
           options: [
             {
               name: 'Celsius',
@@ -83,10 +83,10 @@ setDefaults(props) {
               value: '1',
             },
           ],
-          onChange: (value) => {
+       /*   onChange: (value) => {
             props.settingsStorage.setItem("tempUnit", value);
             saveMenuSettings("tempUnit", value)
-          },
+          },*/
         }),
         Section({
           style: {
@@ -98,12 +98,12 @@ setDefaults(props) {
           fontSize: '30px',
           label: "Background Colour",
           settingsKey: "backgroundColour",
-          value: props.settingsStorage.getItem("backgroundColour"),
+   //       value: props.settingsStorage.getItem("backgroundColour"),
           placeholder: props.settingsStorage.getItem("backgroundColour"),
-          onChange: (value) => {
+ /*         onChange: (value) => {
             props.settingsStorage.setItem("backgroundColour", value);
             saveMenuSettings("backgroundColour", value)
-          },
+          },*/
         }),
         Section({
           style: {
