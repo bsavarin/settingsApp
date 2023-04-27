@@ -18,7 +18,7 @@ const mockAPI = async () => {
     setTimeout(() => {
       resolve({
         body: {
-          data: {
+          data: { 
             text: 'HELLO ZEPPOS',
             dateFormat: 0,
             tempUnit: 0,
@@ -29,29 +29,17 @@ const mockAPI = async () => {
   })
 }
 
- const fetchData = async (ctx) => {
+const fetchData = async (ctx) => {
   try {
-  //  console.log("Settings saved from appside");
-    // A network request is simulated here
-     const res = { body: { data = {}} = {} } = await mockAPI();
-     const res1 = typeof res.body === 'string' ?  JSON.parse(res.body) : res.body;
-//     settings.settingsStorage.setItem(key, JSON.stringify(key))
-//     console.log("Settings saved from appside - setItem: "+key);
-    settings.settingsStorage.setItem(data, JSON.stringify(res1.data))
-    console.log("Settings saved from appside - setItem: "+data);
-     console.log("Settings saved from appside - FETCH DATA: "+res1.data);
+    const res = await mockAPI()
+    const data = typeof res === "string" ? JSON.parse(res) : res;
+    settings.settingsStorage.setItem("item", JSON.stringify(data))
+
+    console.log("Settings saved from appside - setItem: " + data)
     ctx.response({
-      data: { result: res1.data },
-   /*   data: { 
-        result: {
-          text: res1["text"],
-          dateFormat: res1["dateFormat"],
-          tempUnit: res1["tempUnit"]
-        }
-      }*/
+      data: { result: data }
     })
     console.log("Settings saved from appside - FETCH SUCCESS");
-    console.log("Settings saved from appside - FETCH RESPONSE: "+res1.data);
   } catch (error) {
     console.log("Settings saved from appside - FETCH ERROR");
     ctx.response({
@@ -67,12 +55,9 @@ AppSideService({
     console.log("Settings saved from appside - Message LISTEN");
     settings.settingsStorage.addListener('change', async ({ key, newValue, oldValue }) => {
      if (key) {
-        // ...
-       // await reLogin()
        if (newValue !== oldValue) {
-        messageBuilder.call(JSON.parse(newValue));
+          messageBuilder.call(key, newValue);
   //      settings.settingsStorage.setItem(key, newValue);
-   //     newValue = JSON.parse(settings.settingsStorage.getItem(key));
         console.log("Settings saved from appside - Message LISTEN for CHANGE: "+key+", "+newValue);
        } else {
         console.log("No new settings from appside");

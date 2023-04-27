@@ -358,24 +358,26 @@ Page({
       // process data
   //    const dataList = [data].map((i) => ({ name: i }))
 
-/*      const dataList = Object.entries([data]).map(([key, value]) => {
+      const dataList = Object.entries([data]).map(([key, value]) => {
         console.log(key); // key
         console.log(value); // value
       
         return {[key]: value};
-      });*/
+      });
+    
+      console.log("data list new data - "+data);
 
       // settings
-      storage.setKey("dateFormat", data);
-      storage.setKey("tempUnit", data);
+   //   storage.setKey("dateFormat", data);
+   //   storage.setKey("tempUnit", data);
 
-      dateFormat = storage.getKey("dateFormat", (data.dateFormat ? data.dateFormat : 0));
-      tempUnit = storage.getKey("tempUnit", (data.tempUnit ? data.tempUnit : 0));
+      dateFormat = storage.getKey("dateFormat", (dataList.dateFormat ? dataList.dateFormat : 0));
+      tempUnit = storage.getKey("tempUnit", (dataList.tempUnit ? dataList.tempUnit : 0));
       console.log("dateFormat onMessage - "+dateFormat);
       console.log("tempUnit onMessage - "+tempUnit);
 
-   //   logger.log('call dataList', dataList);
-  //    console.log("settings loaded onMessage - "+dataList);
+      logger.log('call dataList', dataList);
+      console.log("settings loaded onMessage - "+dataList);
       this.getSettings();
       this.build();
     })
@@ -398,17 +400,17 @@ Page({
         logger.log('receive data')
         console.log("stringify data - "+JSON.stringify(data))
   //      this.state.dataList = [JSON.stringify(data)].map((d) => ({ name: d }));
-        const result = JSON.stringify(data);//this.state.dataList;
-        logger.log("GET_DATA dataList", result);
+ //       const result = JSON.stringify(data);//this.state.dataList;
+ //       logger.log("GET_DATA dataList", result);
 
-/*        const result = Object.entries([JSON.stringify(data)]).map(([key, value]) => {
+        const result = Object.entries([JSON.stringify(data)]).map(([key, value]) => {
         console.log(key); // key
         console.log(value); // value
       
         return {[key]: value};
       });
 
-      logger.log("GET_DATA dataList", result);*/
+      logger.log("GET_DATA dataList", result);
 
         // settings
         dateFormat = storage.getKey("dateFormat", (result.dateFormat ? result.dateFormat : 0));
